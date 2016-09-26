@@ -1,0 +1,8 @@
+#app:
+#    resource: "@AppBundle/Controller/"
+#    type:     annotation
+
+time.posts.get:
+    path:  /favourite_posts
+    defaults: { _controller: time.post.controller:getFavouritePosts}
+    methods: [GET]

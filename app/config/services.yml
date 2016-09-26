@@ -1,0 +1,43 @@
+parameters:
+  time.api_client.class: AppBundle\Service\ApiClient
+  time.api.view_manager.class: AppBundle\Service\ViewManager
+  time.transformer.factory.class: AppBundle\Service\TransformerFactory
+  time.post.controller.class: AppBundle\Controller\PostController
+  time.post.transformer.class: AppBundle\Transformer\PostTransformer
+  api.base_url: "http://jsonplaceholder.typicode.com"
+
+services:
+  # API Client
+  time.api_client:
+      class: %time.api_client.class%
+      arguments:
+        - "@serializer"
+        - "%api.base_url%"
+      calls:
+        - [setLogger, ["@logger"]]
+
+  # View Manager
+  time.api.view_manager:
+      class: %time.api.view_manager.class%
+
+  # Post Transformer
+  time.transformer.factory:
+    class: %time.transformer.factory.class%
+
+  # Post Controller
+  time.post.controller:
+      class: %time.post.controller.class%
+      arguments:
+        - "@time.api_client"
+        - "@time.api.view_manager"
+        - "@time.post.transformer"
+      calls:
+        - [setLogger, ["@logger"]]
+
+  # Post Transformer
+  time.post.transformer:
+    class: %time.post.transformer.class%
+    lazy: true
+    factory: ["@time.transformer.factory", createTransformer]
+    arguments:
+      - %time.post.transformer.class%
